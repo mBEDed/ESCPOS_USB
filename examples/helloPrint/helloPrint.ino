@@ -46,7 +46,7 @@ void loop() {
     Serial.println(F("Init ESC POS printer"));
 
     printer.setSize('L');   // L for large
-    printer.println(F("Hello printer"));
+    printer.println(F("Hello, Print!"));
     // Do this one time to avoid wasting paper
     while (1) delay(1);
   }

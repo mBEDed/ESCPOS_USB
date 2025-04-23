@@ -1,88 +1,92 @@
-# USBPrinter driver for USB Host Shield 2.0 Library
+# USB Printer Library for Arduino-Compatible Boards
 
-This driver is designed to work for small USB thermal printers. Do not expect
-this to work for laser or inkjet printers because they require complex software
-support.
+This library enables direct USB communication between Arduino-compatible boards and the thermal printer using a USB Host Shield.
 
-This has been tested with USB Host Shield Library 2.0 with one required patch
-and the ESC POS Printer library on a Uno.
+---
 
-https://github.com/felis/USB_Host_Shield_2.0
+## Hardware Requirements
 
-Required patch not merged yet
+- **Arduino-Compatible Board**: Such as Arduino Uno, ESP32, or others with SPI support.
+- **USB Host Shield 2.0**: Based on the MAX3421E chip.
+- **Thermal Printer**: Connected via USB cable.
+- **Thermal Paper Rolls**: 56–58mm width, ≤30mm diameter.
+- **Micro USB Cable**: For programming the microcontroller.
+- **Optional**: External 5V power supply for the printer (recommended for consistent performance).
 
-https://github.com/felis/USB_Host_Shield_2.0/pull/473
+---
 
-https://github.com/gdsports/ESC_POS_Printer
+## Software Requirements
 
-Sample program that prints "Hello Printer" in large letters.
+### Arduino Libraries
 
-```
-#include "USBPrinter.h"         // https://github.com/gdsports/USBPrinter_uhs2
-#include "ESC_POS_Printer.h"    // https://github.com/gdsports/ESC_POS_Printer
+Ensure the following libraries are installed in your Arduino IDE:
 
-class PrinterOper : public USBPrinterAsyncOper
-{
-  public:
-    uint8_t OnInit(USBPrinter *pPrinter);
-};
+1. **USB Host Shield Library 2.0**
+   - Repository: [felis/USB_Host_Shield_2.0](https://github.com/felis/USB_Host_Shield_2.0)
+   - Installation:
+     - Open Arduino IDE.
+     - Navigate to `Sketch` > `Include Library` > `Manage Libraries...`.
+     - Search for "USB Host Shield Library 2.0".
+     - Click "Install".
 
-uint8_t PrinterOper::OnInit(USBPrinter *pPrinter)
-{
-  Serial.println(F("USB Printer OnInit"));
-  Serial.print(F("Bidirectional="));
-  Serial.println(pPrinter->isBidirectional());
-  return 0;
-}
+---
 
-USB myusb;
-PrinterOper AsyncOper;
-USBPrinter uprinter(&myusb, &AsyncOper);
-ESC_POS_Printer printer(&uprinter);
+## Hardware Connections
 
-void setup() {
-  Serial.begin(115200);
-  while (!Serial && millis() < 3000) delay(1);
+### Arduino Uno
 
-  if (myusb.Init()) {
-    Serial.println(F("USB host failed to initialize"));
-    while (1) delay(1);
-  }
+- **D13**: SCK
+- **D12**: MISO
+- **D11**: MOSI
+- **D10**: SS
 
-  Serial.println(F("USB Host init OK"));
-}
+### ESP32 (using VSPI)
 
-void loop() {
-  myusb.Task();
+- **GPIO23**: MOSI
+- **GPIO19**: MISO
+- **GPIO18**: SCK
+- **GPIO5**: SS
 
-  // Make sure USB printer found and ready
-  if (uprinter.isReady()) {
-    printer.begin();
-    Serial.println(F("Init ESC POS printer"));
+**For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.**
 
-    printer.setSize('L');   // L for large
-    printer.println(F("Hello Printer"));
-    printer.feed(2);
+Connect the thermal printer to the USB Host Shield's USB port using a USB cable.
 
-    // Do this one time to avoid wasting paper
-    while (1) delay(1);
-  }
-}
-```
+---
 
-The ESC POS library send printer ESC/POS commands for different font sizes,
-graphics mode, etc. It is based on the Adafruit Thermal printer library but
-modified to work with USB thermal receipt printers. Note different thermal
-printers from even if from the same manufacturers implement different subsets
-of the ESC POS commands. You will have to find the ones that work on your
-printer.
+## Usage
 
-## Related
+It is available in the Arduino library manager or you can download the zip to the local /Arduino/libraries path of your IDE, once installed you can see the example in the menu or open it from the examples folder.
 
-The following driver works on SAMD board with USB OTG ports such as Arduino Zero and MKR family.
+---
 
-https://github.com/gdsports/USBPrinter_uhls
+## Troubleshooting
 
-The following driver works on Teensy 3.6 boards.
+- **No Output on Printer**:
+  - Ensure the printer is powered on and properly connected.
+  - Verify that the USB Host Shield is functioning and recognized by the microcontroller.
 
-https://github.com/gdsports/USBPrinter_t36
+- **Compilation Errors**:
+  - Confirm that all required libraries are correctly installed.
+  - For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.
+
+- **Power Issues**:
+  - The printer may require more power than the microcontroller can provide via USB. Consider using an external 5V power supply.
+
+---
+
+## If the library was useful to you
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/userHarpreet)
+
+---
+
+## References
+
+This has never been success without the work below.
+
+- USB Host Shield Library 2.0: [felis/USB_Host_Shield_2.0](https://github.com/felis/USB_Host_Shield_2.0)
+- USBPrinter_uhs2: [gdsports/USBPrinter_uhs2](https://github.com/gdsports/USBPrinter_uhs2) **just another port with minor standardizations**
+
+
+---
+
+Feel free to customize and expand upon this project to suit your specific needs, such as adding image printing capabilities or integrating with other peripherals.

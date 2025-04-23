@@ -1,0 +1,37 @@
+{
+  "name": "ESCPOS via USB",
+  "version": "0.0.1",
+  "authors": {
+    "name": "mBEDed μSystems",
+    "email": "mbededsystems@outlook.com"
+  },
+  "homepage": "http://mBEDed.Systems",
+  "license": "MIT",
+  "description": "A Library to interface Thermal Printer with Arduino over USB Host shield.",
+  "keywords": "arduino, USB, host, thermal, printer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mBEDed/ESCPOS_USB.git"
+  },
+  "build": {
+    "includeDir": "src"
+  },
+  "export": {
+    "include": [
+      "src",
+      "examples",
+      "LICENSE",
+      "README.md"
+    ],
+    "exclude": [
+      "**/__vm",
+      "**/.vs",
+      "**/*.filters",
+      "**/*.log",
+      "**/*.tmp"
+    ]
+  },
+  "platforms": "*",
+  "frameworks": "*"
+}
+
