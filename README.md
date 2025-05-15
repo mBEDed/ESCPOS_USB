@@ -28,7 +28,11 @@ Ensure the following libraries are installed in your Arduino IDE:
      - Navigate to `Sketch` > `Include Library` > `Manage Libraries...`.
      - Search for "USB Host Shield Library 2.0".
      - Click "Install".
-
+2. **ESC_POS_Printer**
+   - Repository: [ESC_POS_Printer](https://github.com/gdsports/ESC_POS_Printer)
+   - Installation:
+     - download the zip.
+     - extract in Arduino Library Folder (/Arduino/libraries).
 ---
 
 ## Hardware Connections
