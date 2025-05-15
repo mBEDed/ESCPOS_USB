@@ -28,11 +28,6 @@ Ensure the following libraries are installed in your Arduino IDE:
      - Navigate to `Sketch` > `Include Library` > `Manage Libraries...`.
      - Search for "USB Host Shield Library 2.0".
      - Click "Install".
-2. **ESC_POS_Printer**
-   - Repository: [ESC_POS_Printer](https://github.com/gdsports/ESC_POS_Printer)
-   - Installation:
-     - download the zip.
-     - extract in Arduino Library Folder (/Arduino/libraries).
 ---
 
 ## Hardware Connections
@@ -50,8 +45,6 @@ Ensure the following libraries are installed in your Arduino IDE:
 - **GPIO19**: MISO
 - **GPIO18**: SCK
 - **GPIO5**: SS
-
-**For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.**
 
 Connect the thermal printer to the USB Host Shield's USB port using a USB cable.
 
