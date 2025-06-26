@@ -1,89 +1,51 @@
-# USB Printer Library for Arduino-Compatible Boards
+# ESP32 S3 interfacing with USB Host Thermal Printer
 
-This library enables direct USB communication between Arduino-compatible boards and the thermal printer using a USB Host Shield.
+Examples using Espressif ESP32 S3 in USB host
+mode. The code is based on ESP32 USB host tests and examples included with ESP-IDF. 
 
----
+To see the sketch output on the serial monitor set the Core Debug Level to
+Verbose.
 
-## Hardware Requirements
+## Software
 
-- **Arduino-Compatible Board**: Such as Arduino Uno, ESP32, or others with SPI support.
-- **USB Host Shield 2.0**: Based on the MAX3421E chip.
-- **Thermal Printer**: Connected via USB cable.
-- **Thermal Paper Rolls**: 56–58mm width, ≤30mm diameter.
-- **Micro USB Cable**: For programming the microcontroller.
-- **Optional**: External 5V power supply for the printer (recommended for consistent performance).
+* Arduino IDE 
+* arduino-esp32 2.0.1 or above
 
----
+## Hardware
 
-## Software Requirements
+* Espressif ESP32 S3 DevKit board
+* USB OTG to USB host cable
 
-### Arduino Libraries
+![USB printer connected to ESP32 S3](./printer.jpg)
 
-Ensure the following libraries are installed in your Arduino IDE:
+The USB printer is self-powered which means it is powered by its battery. It
+does not need the USB VBUS 5V and does not charge its battery from VBUS.
 
-1. **USB Host Shield Library 2.0**
-   - Repository: [felis/USB_Host_Shield_2.0](https://github.com/felis/USB_Host_Shield_2.0)
-   - Installation:
-     - Open Arduino IDE.
-     - Navigate to `Sketch` > `Include Library` > `Manage Libraries...`.
-     - Search for "USB Host Shield Library 2.0".
-     - Click "Install".
----
+## dumpdesc -- USB Descriptor Dump
 
-## Hardware Connections
+Arduino sketch that shows frequently used USB descriptors in human readable
+form.
 
-### Arduino Uno
+Sample output
+```
+[ 15501][I][show_desc.hpp:54] show_config_desc(): bLength: 9
+[ 15506][I][show_desc.hpp:55] show_config_desc(): bDescriptorType(config): 2
+[ 15513][I][show_desc.hpp:56] show_config_desc(): wTotalLength: 216
+[ 15519][I][show_desc.hpp:57] show_config_desc(): bNumInterfaces: 4
+[ 15525][I][show_desc.hpp:58] show_config_desc(): bConfigurationValue: 1
+[ 15531][I][show_desc.hpp:59] show_config_desc(): iConfiguration: 0
+[ 15537][I][show_desc.hpp:64] show_config_desc(): bmAttributes(, Remote Wakeup): 0xa0
+[ 15545][I][show_desc.hpp:65] show_config_desc(): bMaxPower: 50 = 100 mA
+```
+## printHello -- Hello World via USB Host Printer Class
 
-- **D13**: SCK
-- **D12**: MISO
-- **D11**: MOSI
-- **D10**: SS
+Arduino sketch that is just enough to print one line on a USB thermal receipt
+printer. Would be nice to create a subclass from the Arduino stream class so
+it appears similar to a Serial device. And an ESC POS library to print in
+graphics mode, double wide, italics, bold, etc. Lots more work required.
 
-### ESP32 (using VSPI)
+## serialPrint -- Print text to from serial to Printer
 
-- **GPIO23**: MOSI
-- **GPIO19**: MISO
-- **GPIO18**: SCK
-- **GPIO5**: SS
+The sketch reads a line from the serial monitor and writes it to the printer.
+This proves USB printer communication is working.
 
-Connect the thermal printer to the USB Host Shield's USB port using a USB cable.
-
----
-
-## Usage
-
-It is available in the Arduino library manager or you can download the zip to the local /Arduino/libraries path of your IDE, once installed you can see the example in the menu or open it from the examples folder.
-
----
-
-## Troubleshooting
-
-- **No Output on Printer**:
-  - Ensure the printer is powered on and properly connected.
-  - Verify that the USB Host Shield is functioning and recognized by the microcontroller.
-
-- **Compilation Errors**:
-  - Confirm that all required libraries are correctly installed.
-  - For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.
-
-- **Power Issues**:
-  - The printer may require more power than the microcontroller can provide via USB. Consider using an external 5V power supply.
-
----
-
-## If the library was useful to you
-[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/userHarpreet)
-
----
-
-## References
-
-This has never been success without the work below.
-
-- USB Host Shield Library 2.0: [felis/USB_Host_Shield_2.0](https://github.com/felis/USB_Host_Shield_2.0)
-- USBPrinter_uhs2: [gdsports/USBPrinter_uhs2](https://github.com/gdsports/USBPrinter_uhs2) **just another port with minor standardizations**
-
-
----
-
-Feel free to customize and expand upon this project to suit your specific needs, such as adding image printing capabilities or integrating with other peripherals.
