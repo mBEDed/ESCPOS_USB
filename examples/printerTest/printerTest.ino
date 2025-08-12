@@ -11,9 +11,24 @@
   to match your printer (hold feed button on powerup for test page).
   ------------------------------------------------------------------------*/
 
+#include <SPI.h>
 #include "USBPrinter.h"
 #include "ESC_POS_Printer.h"
 #include "qrcode.h"
+
+// Explicit ESP32 pin mapping for MAX3421E-based USB Host Shield
+// Adjust these if your wiring differs. Avoid ESP32 strapping pins (0, 2, 12, 15).
+#if defined(ESP32)
+// VSPI default pins on most ESP32 dev boards
+static const int USB_SCK = 18;
+static const int USB_MISO = 19;
+static const int USB_MOSI = 23;
+// Control pins to the shield (wire these accordingly)
+static const int USB_SS = 5;     // MAX3421E SS (CS)
+static const int USB_INT = 17;   // MAX3421E INT (to ESP32 input)
+static const int USB_GPX = 16;   // MAX3421E GPX (optional, can be -1)
+static const int USB_RST = 4;    // MAX3421E RESET (optional but recommended)
+#endif
 
 class PrinterOper : public USBPrinterAsyncOper
 {
@@ -34,14 +49,57 @@ PrinterOper AsyncOper;
 USBPrinter uprinter(&myusb, &AsyncOper);
 ESC_POS_Printer printer(&uprinter);
 
+static bool initUSBHost()
+{
+#if defined(ESP32)
+  // Bring up VSPI with explicit pins using default SPI instance
+  SPI.begin(USB_SCK, USB_MISO, USB_MOSI, USB_SS);
+  pinMode(USB_SS, OUTPUT);
+  digitalWrite(USB_SS, HIGH);
+  if (USB_RST >= 0) {
+    pinMode(USB_RST, OUTPUT);
+    // Pulse reset low->high to ensure MAX3421E comes up cleanly
+    digitalWrite(USB_RST, LOW);
+    delay(10);
+    digitalWrite(USB_RST, HIGH); // deassert reset
+  }
+  if (USB_INT >= 0) pinMode(USB_INT, INPUT_PULLUP); // MAX3421E INT is active-low, open-drain
+  if (USB_GPX >= 0) pinMode(USB_GPX, INPUT_PULLUP);
+  Serial.println(F("ESP32 VSPI initialized for USB Host Shield"));
+#endif
+  delay(50); // allow pins and regulator to settle
+
+  // Optional: bring VBUS on early
+  myusb.vbusPower(vbus_on);
+  delay(10);
+
+  // Try up to 3 attempts with long oscillator settle time
+  for (int attempt = 1; attempt <= 3; ++attempt) {
+    int8_t rc = myusb.Init(1000); // 1s timeout for OSCOK
+    if (rc == 0) {
+      Serial.print(F("USB Host init OK on attempt ")); Serial.println(attempt);
+      return true;
+    }
+    Serial.print(F("USB init attempt ")); Serial.print(attempt); Serial.println(F(" failed"));
+    // Toggle RESET and retry
+#if defined(ESP32)
+    if (USB_RST >= 0) {
+      digitalWrite(USB_RST, LOW);
+      delay(20);
+      digitalWrite(USB_RST, HIGH);
+    }
+#endif
+    delay(100);
+  }
+  return false;
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 3000) delay(1);
-  if (myusb.Init())
+  if (!initUSBHost()) {
     Serial.println(F("USB host failed to initialize"));
-
-  delay( 200 );
-  Serial.println(F("USB Host init OK"));
+  }
 }
 
 void printer_test()
