@@ -63,11 +63,11 @@ It is available in the Arduino library manager or you can download the zip to th
 - **No Output on Printer**:
   - Ensure the printer is powered on and properly connected.
   - Verify that the USB Host Shield is functioning and recognized by the microcontroller.
+  - For ESP32, the frequncy of SPI communication needs to be reduced from 26000000 to 8000000 in usbhost.h file from USB_Host_Shield_2.0 library.
 
 - **Compilation Errors**:
   - Confirm that all required libraries are correctly installed.
   - For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.
-  - Also for ESP32, the frequncy of SPI communication needs to be reduced from 26000000 to 8000000 in usbhost.h file from USB_Host_Shield_2.0 library.
 
 - **Power Issues**:
   - The printer may require more power than the microcontroller can provide via USB. Consider using an external 5V power supply.
