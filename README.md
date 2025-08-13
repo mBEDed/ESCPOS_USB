@@ -45,6 +45,8 @@ Ensure the following libraries are installed in your Arduino IDE:
 - **GPIO19**: MISO
 - **GPIO18**: SCK
 - **GPIO5**: SS
+- **GPIO17**: INT
+- **GPIO4**: RST
 
 Connect the thermal printer to the USB Host Shield's USB port using a USB cable.
 
@@ -65,6 +67,7 @@ It is available in the Arduino library manager or you can download the zip to th
 - **Compilation Errors**:
   - Confirm that all required libraries are correctly installed.
   - For ESP32 users, make sure `#include "usbhub.h"` is added to USBPrinter.h.
+  - Also for ESP32, the frequncy of SPI communication needs to be reduced from 26000000 to 8000000.
 
 - **Power Issues**:
   - The printer may require more power than the microcontroller can provide via USB. Consider using an external 5V power supply.
